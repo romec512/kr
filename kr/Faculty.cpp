@@ -1,6 +1,5 @@
 #include "Faculty.h"
 #include "Header.h"
-#include <iostream>
 
 
 Faculty::Faculty(int size)
