@@ -23,7 +23,6 @@ Faculty::~Faculty()
 			delete(this->mass[i]);
 		}
 	}
-	delete(this);
 }
 
 void Faculty::addGroup(Group *group)//добавление группы
@@ -59,4 +58,39 @@ void Faculty::addGroup(Group *group)//добавление группы
 Group** Faculty::getMass()//получение массива групп
 {
 	return this->mass;
+}
+
+void Faculty::deleteStudent()// int groupName - номер группы, в которой будет удален студент, char *lastName - фамили€ удал€емого студента
+{
+	int groupNumber;
+	char *lastName = (char*)malloc(256*sizeof(char));
+	std::cout << "¬ведите номер группы, в которой хотите удалить студента." << std::endl;
+	std::cin >> groupNumber;
+	std::cout << "¬ведите фамилию студента, которого хотите удалить." << std::endl;
+	std::cin >> lastName;
+	Group **mass = this->getMass();
+	for (int i = 0; i < this->size; i++)
+	{//поиск необходимой группы
+		if (mass[i]->getNumber() == groupNumber)//условие нахождени€ группы
+		{
+			Student *student = mass[i]->getStudent();
+			if (!strcmp(student->getLastName(), lastName))//проверка первого студента в списке
+			{
+				Student *next = student->getNext();
+				mass[i]->setStudent(next);//фамилии совпали - удал€ем.
+				delete(student);
+				return;
+			}
+			while (student->getNext() != NULL) //аналогичное удаление дл€ остальных элементов
+			{
+				if (!strcmp(student->getNext()->getLastName(), lastName))
+				{
+					Student *deleted = student->getNext();
+					student->setNext(deleted->getNext());
+					delete(deleted);
+				}
+				student = student->getNext();
+			}
+		}
+	}
 }

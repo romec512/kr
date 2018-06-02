@@ -16,7 +16,6 @@ Group::~Group()
 		this->student = this->student->getNext();
 		delete(deleted);
 	}
-	delete(this);
 }
 
 void Group::setNumber(int num)//установка номера
@@ -29,7 +28,7 @@ int Group::getNumber()//получение номера
 	return this->number;
 }
 
-void Group::setStudent(Student *student)//добавление студента
+void Group::addStudent(Student *student)//добавление студента
 {
 	if (this->student == NULL)
 	{
@@ -54,7 +53,45 @@ void Group::setStudent(Student *student)//добавление студента
 	}
 }
 
+void Group::setStudent(Student *student)
+{
+	this->student = student;
+}
 Student* Group::getStudent()//получение списка студентов
 {
 	return this->student;
+}
+
+//ToDo: сделать удаление 1-го студента из группы по его фамилии
+
+void Group::deleteStudent(char *lastName)
+{
+	if (lastName == NULL)
+	{
+		std::cout << "Необходимо указать фамилию студента." << std::endl;
+	}
+	else
+	{
+		Student *current = this->student;
+		if (current == NULL)
+		{
+			return;
+		}
+		if (!strcmp(current->getLastName(), lastName))
+		{
+			this->student = current->getNext();
+			delete(current);
+		}
+		while (current->getNext() != NULL)
+		{
+			if (!strcmp(current->getNext()->getLastName(), lastName))
+			{
+				Student *deleted = current->getNext();
+				current->setNext(deleted->getNext());
+				deleted->setNext(NULL);
+				delete(deleted);
+			}
+			current = current->getNext();
+		}
+	}
 }

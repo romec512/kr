@@ -7,6 +7,7 @@ public:
 	~Faculty();
 	void addGroup(Group *group);
 	Group** getMass();
+	void deleteStudent();
 private:
 	Group **mass;
 	int count;//кол-во элементов массива

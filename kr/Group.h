@@ -7,8 +7,10 @@ public:
 	~Group();
 	void setNumber(int num);
 	int getNumber();
+	void addStudent(Student *student);
 	void setStudent(Student *student);
 	Student* getStudent();
+	void deleteStudent(char *lastName);
 private:
 	int number;
 	Student *student;
