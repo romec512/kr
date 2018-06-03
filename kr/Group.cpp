@@ -27,7 +27,7 @@ int Group::getNumber()//получение номера
 {
 	return this->number;
 }
-
+//NOTE: addStudent(Student *student)
 void Group::addStudent(Student *student)//добавление студента
 {
 	if (this->student == NULL)
@@ -62,8 +62,7 @@ Student* Group::getStudent()//получение списка студентов
 	return this->student;
 }
 
-//ToDo: сделать удаление 1-го студента из группы по его фамилии
-
+//NOTE: deleteStudent(char *lastName)
 void Group::deleteStudent(char *lastName)
 {
 	if (lastName == NULL)

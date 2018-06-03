@@ -6,6 +6,7 @@ Student::Student()
 {
 
 }
+//NOTE: Student(char *lastName, int year)
 Student::Student(char *lastName, int year)
 {
 	if (lastName != nullptr)

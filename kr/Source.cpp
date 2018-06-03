@@ -7,6 +7,8 @@ void main()
 {
 	setlocale(LC_ALL, "rus");
 	Faculty *faculty = new Faculty(6);
+	//faculty->addContent();
+	//faculty->addContent();
 	for (int i = 0; i < 5; i++)
 	{
 		Group *group = new Group();
@@ -26,7 +28,11 @@ void main()
 	Group *gr = new Group();
 	gr->setNumber(4211);
 	faculty->addGroup(gr);
-	faculty->deleteStudent();
+	faculty->addGroup(gr);
+	faculty->addStudent(4211, "sidorov", 1998);
+	faculty->addStudent(4211, "petrov", 1992);
+	faculty->addStudent(4211, "turach", 1993);
+	faculty->deleteContent();
 	Group **mass = faculty->getMass();
 	system("pause");
 }
