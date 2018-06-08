@@ -42,12 +42,23 @@ void Faculty::addGroup(Group *group)//добавление группы
 		return;
 	}
 	int i = 0;
+	if (mass[i]->getNumber() == group->getNumber())
+	{
+		std::cout << "Группа уже существует." << std::endl;
+		delete(group);
+		return;
+	}
 	while(mass[i]->getNumber() < group->getNumber() && i < size)
 	{
 		i++;
 		if (mass[i] == NULL)
 		{
 			break;
+		}else if (mass[i]->getNumber() == group->getNumber())
+		{
+			std::cout << "Группа уже существует." << std::endl;
+			delete(group);
+			return;
 		}
 	}
 		for (int j = this->count; j >= i; j--)
@@ -78,6 +89,11 @@ void Faculty::deleteStudent()
 	Group **mass = this->getMass();
 	for (int i = 0; i < this->size; i++)
 	{//поиск необходимой группы
+		if (mass[i] == NULL)
+		{
+			std::cout << "Группа или студент не найдены." << std::endl;
+			return;
+		}
 		if (mass[i]->getNumber() == groupNumber)//условие нахождения группы
 		{
 			std::cout << "Введите фамилию студента, которого хотите удалить." << std::endl;
@@ -211,6 +227,11 @@ void Faculty::deleteGroup()
 	}
 	for (int i = 0; i < this->size; i++)
 	{
+		if (this->mass[i] == NULL)
+		{
+			std::cout << "Группа не найдена." << std::endl;
+			return;
+		}
 		if (this->mass[i]->getNumber() == number)
 		{
 			delete(this->mass[i]);
