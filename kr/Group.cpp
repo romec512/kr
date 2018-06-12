@@ -4,52 +4,67 @@
 
 Group::Group()
 {
-	this->student = nullptr;
+	this->setStudent(NULL);
 }
 
 
 Group::~Group()
 {
-	while (this->student != nullptr)
+	while (this->getStudent() != nullptr)
 	{
-		Student *deleted = this->student;
-		this->student = this->student->getNext();
+		Student *deleted = this->getStudent();
+		this->setStudent(this->student->getNext());
 		delete(deleted);
 	}
 }
-
-void Group::setNumber(int num)//установка номера
+//установка номера
+void Group::setNumber(int num)
 {
 	this->number = num;
 }
-
-int Group::getNumber()//получение номера
+//получение номера
+int Group::getNumber()
 {
 	return this->number;
 }
-//NOTE: addStudent(Student *student)
-void Group::addStudent(Student *student)//добавление студента
+//Добавление студента
+void Group::addStudent(Student *student)
 {
-	if (this->student == NULL)
+	if (this->getStudent() == NULL)
 	{
-		this->student = student;
+		student->setNext(NULL);
+		this->setStudent(student);
+		return;
 	}
 	else
 	{
-		Student *current = this->student;
-		if (strcmp(current->getLastName(), student->getLastName()) == 1)
+		Student *current = this->getStudent();
+		if (strcmp(this->getStudent()->getLastName(), student->getLastName()) == 1)
 		{
-				student->setNext(current);
-				this->student = student;
-				return;
+			student->setNext(current);
+			this->setStudent(student);
+			return;
 		}
-		while (current->getNext() != NULL && strcmp(current->getLastName(), student->getLastName()) == -1)
+		else if (current->getNext() == NULL)
+		{
+			current->setNext(student);
+			return;
+		}
+		while (current->getNext()->getNext() != NULL && strcmp(current->getNext()->getLastName(), student->getLastName()) == -1)
 		{
 			current = current->getNext();
 		}
-		student->setNext(current->getNext());
-		current->setNext(student);
-		return;
+		if (strcmp(current->getNext()->getLastName(), student->getLastName()) == 1)
+		{
+			student->setNext(current->getNext());
+			current->setNext(student);
+			return;
+		}
+		else
+		{
+			current->getNext()->setNext(student);
+			return;
+		}
 	}
 }
 
@@ -57,13 +72,14 @@ void Group::setStudent(Student *student)
 {
 	this->student = student;
 }
-Student* Group::getStudent()//получение списка студентов
+//получение списка студентов
+Student* Group::getStudent()
 {
 	return this->student;
 }
 
-//NOTE: deleteStudent(char *lastName)
-void Group::deleteStudent(char *lastName)
+//удалить студента
+int Group::deleteStudent(char *lastName)
 {
 	if (lastName == NULL)
 	{
@@ -74,12 +90,13 @@ void Group::deleteStudent(char *lastName)
 		Student *current = this->student;
 		if (current == NULL)
 		{
-			return;
+			return 0;
 		}
 		if (!strcmp(current->getLastName(), lastName))
 		{
 			this->student = current->getNext();
 			delete(current);
+			return 1;
 		}
 		while (current->getNext() != NULL)
 		{
@@ -89,6 +106,7 @@ void Group::deleteStudent(char *lastName)
 				current->setNext(deleted->getNext());
 				deleted->setNext(NULL);
 				delete(deleted);
+				return 1;
 			}
 			current = current->getNext();
 		}

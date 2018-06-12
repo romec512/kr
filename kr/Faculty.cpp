@@ -10,9 +10,6 @@ Faculty::Faculty()
 	}
 	this->count = 0;
 	this->size = 10;
-	//this->name = (char*)malloc(256 * sizeof(char));
-	//std::cout << "Введите название факультета:" << std::endl;
-	//std::cin >> this->name;
 	this->name = NULL;
 }
 
@@ -27,8 +24,8 @@ Faculty::~Faculty()
 		}
 	}
 }
-//NOTE: void Faculty::addGroup(Group *group)
-void Faculty::addGroup(Group *group)//добавление группы
+//Метод добавления группы из консоли.
+void Faculty::addGroup(Group *group)
 {
 	if (this->count == this->size)
 	{
@@ -41,39 +38,76 @@ void Faculty::addGroup(Group *group)//добавление группы
 		this->count++;
 		return;
 	}
-	int i = 0;
-	if (mass[i]->getNumber() == group->getNumber())
+	for (int i = 0; i < this->count; i++)
 	{
-		std::cout << "Группа уже существует." << std::endl;
-		delete(group);
+		if (mass[i] != NULL)
+		{
+			if (mass[i]->getNumber() == group->getNumber())
+			{
+				std::cout << "Группа уже существует!" << std::endl;
+				delete(group);
+				return;
+			}
+		}
+	}
+	int searchNumber;
+	int number;
+	int select;
+	std::cout << "Введите номер группы до или после которой хотите добавить новую группу." << std::endl;
+	while (!(std::cin >> searchNumber))
+	{
+		std::cout << "Ошибка ввода." << std::endl;
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::cout << "Введите номер группы до или после которой хотите добавить новую группу." << std::endl;
+	}
+	int searchIndex = -1;
+	for (int i = 0; i < this->count; i++)
+	{
+		if (mass[i] != NULL)
+		{
+			if (mass[i]->getNumber() == searchNumber)
+			{
+				searchIndex = i;
+				break;
+			}
+		}
+	}
+	if (searchIndex == -1)
+	{
+		std::cout << "Заданная группа не найдена." << std::endl;
 		return;
 	}
-	while(mass[i]->getNumber() < group->getNumber() && i < size)
+	std::cout << "1)Добавить до.\n2)Добавить после." << std::endl;
+	while (!(std::cin >> select))
 	{
-		i++;
-		if (mass[i] == NULL)
-		{
-			break;
-		}else if (mass[i]->getNumber() == group->getNumber())
-		{
-			std::cout << "Группа уже существует." << std::endl;
-			delete(group);
-			return;
-		}
+		std::cout << "Ошибка ввода." << std::endl;
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::cout << "Введите номер группы до или после которой хотите добавить новую группу." << std::endl;
 	}
-		for (int j = this->count; j >= i; j--)
-		{
-			mass[j+1] = mass[j];
-		}
-		mass[i] = group;
-		this->count++;
+	if (select != 1 && select != 2)
+	{
+		std::cout << "Ошибка ввода." << std::endl;
+		return;
+	}
+	if (select == 2)//если добавление после
+	{
+		searchIndex++;
+	}
+	for (int j = this->count; j >= searchIndex; j--)
+	{
+		mass[j + 1] = mass[j];
+	}
+	mass[searchIndex] = group;
+	this->count++;
 }
 
 Group** Faculty::getMass()//получение массива групп
 {
 	return this->mass;
 }
-//NOTE: void Faculty::deleteStudent(int groupNumber, char *lastName)
+//удаление студента вводом с клавиатуры
 void Faculty::deleteStudent()
 {
 	int groupNumber;
@@ -98,36 +132,16 @@ void Faculty::deleteStudent()
 		{
 			std::cout << "Введите фамилию студента, которого хотите удалить." << std::endl;
 			std::cin >> lastName;
-			Student *student = mass[i]->getStudent();
-			if (student == NULL)
+			if (!(mass[i]->deleteStudent(lastName)))
 			{
-				std::cout << "В группе нет студентов." << std::endl;
-				return;
+				std::cout << "Студент не найден." << std::endl;
 			}
-			if (!strcmp(student->getLastName(), lastName))//проверка первого студента в списке
-			{
-				Student *next = student->getNext();
-				mass[i]->setStudent(next);//фамилии совпали - удаляем.
-				delete(student);
-				return;
-			}
-			while (student->getNext() != NULL) //аналогичное удаление для остальных элементов
-			{
-				if (!strcmp(student->getNext()->getLastName(), lastName))
-				{
-					Student *deleted = student->getNext();
-					student->setNext(deleted->getNext());
-					delete(deleted);
-					return;
-				}
-				student = student->getNext();
-			}
+			return;
 		}
 	}
-	std::cout << "Студент не найден." << std::endl;
 }
 
-//NOTE: void Faculty::addStudent(int groupNumber, char *lastName, int year)
+//добавление студента по алфавитному порядку
 void Faculty::addStudent(int groupNumber, char *lastName, int year)//добавление студента
 {
 	for (int i = 0; i < this->size; i++)
@@ -161,13 +175,13 @@ void Faculty::addContent()
 		if (select == 1)
 		{
 			int number;
-			std::cout << "Введите номер группы." << std::endl;
+			std::cout << "Введите номер группы, которую хотите добавить." << std::endl;
 			while (!(std::cin >> number))
 			{
 				std::cout << "Ошибка ввода." << std::endl;
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "Введите номер группы." << std::endl;
+				std::cout << "Введите номер группы, которую хотите добавить." << std::endl;
 			}
 			Group *newGroup = new Group();
 			newGroup->setNumber(number);
@@ -213,7 +227,7 @@ void Faculty::addContent()
 			std::cout << "Группа не найдена." << std::endl;
 	}
 }
-//NOTE:void Faculty::deleteGroup()  удаление группы, ввод номера групы осуществляется из консоли.
+//удаление группы, ввод номера групы осуществляется из консоли.
 void Faculty::deleteGroup()
 {
 	int number;
@@ -322,8 +336,9 @@ void Faculty::LoadFromFile()
 			position = ftell(input);
 			statusCode = fscanf(input, "\t\tСтудент: %[a-zA-Zа-яА-Я], год рождения: %d", studentLastName, &studentYear);
 			if (statusCode == -1)
-			{
-				this->addGroup(group);
+			{//добавление группы
+				this->mass[this->count] = group;
+				this->count++;
 				fclose(input);
 				return;
 			}
@@ -340,7 +355,8 @@ void Faculty::LoadFromFile()
 				}
 				else if (statusCode == 1)
 				{
-					this->addGroup(group);
+					this->mass[this->count] = group;
+					this->count++;
 					break;
 				}
 			}
@@ -390,10 +406,11 @@ char* Faculty::getName()
 	return this->name;
 }
 
-//ToDo: Сделать сохранение в файл.
+
 void Faculty::saveInFile()
 {
-	if (this->mass == NULL)
+	Group **mass = this->getMass();
+	if (mass == NULL)
 	{
 		std::cout << "Факультет пуст." << std::endl;
 		return;
@@ -402,10 +419,10 @@ void Faculty::saveInFile()
 	fprintf(output, "Факультет: %s\n", this->name);
 	for (int i = 0; i < this->count; i++)
 	{
-		if (this->mass[i] != NULL)
+		if (mass[i] != NULL)
 		{
-			fprintf(output, "\tГруппа: %d\n", this->mass[i]->getNumber());
-			Student *current = this->mass[i]->getStudent();
+			fprintf(output, "\tГруппа: %d\n", mass[i]->getNumber());
+			Student *current = mass[i]->getStudent();
 			while (current != NULL)
 			{
 				fprintf(output, "\t\tСтудент: %s, год рождения: %d\n", current->getLastName(), current->getYear());
@@ -417,7 +434,8 @@ void Faculty::saveInFile()
 }
 void Faculty::search()
 {
-	if (this->mass == NULL)
+	Group **mass = this->getMass();
+	if (mass == NULL)
 	{
 		std::cout << "Факультет пуст." << std::endl;
 	}
@@ -443,21 +461,24 @@ void Faculty::search()
 		}
 		for (int i = 0; i < this->count; i++)
 		{
-			if (this->mass[i]->getNumber() == groupNumber)
+			if (mass[i] != NULL)
 			{
-				char *lastName = (char*)malloc(256 * sizeof(char));
-				std::cout << "Введите фамилию студента, которого хотите найти." << std::endl;
-				std::cin >> lastName;
-				Student *current = this->mass[i]->getStudent();
-				while (current != NULL)
+				if (mass[i]->getNumber() == groupNumber)
 				{
-					if (!strcmp(current->getLastName(), lastName))
+					char *lastName = (char*)malloc(256 * sizeof(char));
+					std::cout << "Введите фамилию студента, которого хотите найти." << std::endl;
+					std::cin >> lastName;
+					Student *current = mass[i]->getStudent();
+					while (current != NULL)
 					{
-						std::cout << "Группа: " << this->mass[i]->getNumber() << std::endl;
-						std::cout << "\tСтудент: " << current->getLastName() << ", год рождения: " << current->getYear() << std::endl;
-						return;
+						if (!strcmp(current->getLastName(), lastName))
+						{
+							std::cout << "Группа: " << mass[i]->getNumber() << std::endl;
+							std::cout << "\tСтудент: " << current->getLastName() << ", год рождения: " << current->getYear() << std::endl;
+							return;
+						}
+						current = current->getNext();
 					}
-					current = current->getNext();
 				}
 			}
 		}
@@ -469,14 +490,14 @@ void Faculty::search()
 		std::cin >> lastName;
 		for (int i = 0; i < this->count; i++)
 		{
-			if (this->mass[i] != NULL)
+			if (mass[i] != NULL)
 			{
-				Student *current = this->mass[i]->getStudent();
+				Student *current = mass[i]->getStudent();
 				while (current != NULL)
 				{
 					if (!strcmp(current->getLastName(), lastName))
 					{
-						std::cout << "Группа: " << this->mass[i]->getNumber() << std::endl;
+						std::cout << "Группа: " << mass[i]->getNumber() << std::endl;
 						std::cout << "\tСтудент: " << current->getLastName() << ", год рождения: " << current->getYear() << std::endl;
 					}
 					current = current->getNext();

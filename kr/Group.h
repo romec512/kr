@@ -10,7 +10,7 @@ public:
 	void addStudent(Student *student);
 	void setStudent(Student *student);
 	Student* getStudent();
-	void deleteStudent(char *lastName);
+	int deleteStudent(char *lastName);
 private:
 	int number;
 	Student *student;
